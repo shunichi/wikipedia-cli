@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { searchWikipedia, getWikipediaPage, getRandomPage } from './wikipedia';
+import { searchWikipedia, getWikipediaPage, getRandomPage, getWikipediaUrl } from './wikipedia';
 import { saveHistory, getHistory } from './history';
 
 const program = new Command();
@@ -30,6 +30,7 @@ program
       
       results.slice(0, 10).forEach((result, index) => {
         console.log(`${index + 1}. ${result.title}`);
+        console.log(`   URL: ${getWikipediaUrl(result.title, options.lang)}`);
         if (result.snippet) {
           console.log(`   ${result.snippet.replace(/<[^>]*>/g, '')}`);
         }
@@ -64,6 +65,7 @@ program
       }
       
       console.log(`記事: ${page.title}`);
+      console.log(`URL: ${getWikipediaUrl(page.title, options.lang)}`);
       console.log('═'.repeat(50));
       
       if (options.summary) {
@@ -116,6 +118,7 @@ program
       }
 
       console.log(`ランダム記事: ${page.title}`);
+      console.log(`URL: ${getWikipediaUrl(page.title, options.lang)}`);
       console.log('═'.repeat(50));
       
       if (page.extract) {

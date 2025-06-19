@@ -19,6 +19,11 @@ const getWikipediaBaseUrl = (lang: string): string => {
   return `https://${lang}.wikipedia.org/w/api.php`;
 };
 
+export const getWikipediaUrl = (title: string, lang: string = 'ja'): string => {
+  const encodedTitle = encodeURIComponent(title.replace(/ /g, '_'));
+  return `https://${lang}.wikipedia.org/wiki/${encodedTitle}`;
+};
+
 export async function searchWikipedia(
   query: string,
   lang: string = 'ja'
