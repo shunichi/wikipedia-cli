@@ -85,6 +85,7 @@ export async function getWikipediaPage(
           exintro: true,
           explaintext: true,
           exsectionformat: 'plain',
+          exsentences: 3, // 最初の3文のみ取得
           redirects: 1, // リダイレクト自動追従
           origin: '*'
         }
@@ -122,12 +123,26 @@ export async function getWikipediaPage(
       content = page.revisions[0].slots.main['*'];
       // MediaWiki記法を簡単なテキストに変換
       content = content
+        // InfoBoxなどのテンプレートを除去
+        .replace(/\{\{[^{}]*\}\}/g, '')
+        .replace(/\{\{[^{}]*\{\{[^{}]*\}\}[^{}]*\}\}/g, '')
+        // セクションヘッダー
         .replace(/={2,}\s*(.+?)\s*={2,}/g, '\n\n$1\n' + '─'.repeat(20) + '\n')
-        .replace(/\[\[([^\]|]+)(\|[^\]]+)?\]\]/g, '$1')
+        // リンク
+        .replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g, '$2')
+        .replace(/\[\[([^\]|]+)\]\]/g, '$1')
         .replace(/\[([^\s]+)\s+([^\]]+)\]/g, '$2 ($1)')
+        // フォーマット
         .replace(/'''([^']+)'''/g, '$1')
         .replace(/''([^']+)''/g, '$1')
-        .replace(/{{[^}]+}}/g, '')
+        // ファイル参照
+        .replace(/\[\[ファイル:[^\]]+\]\]/g, '')
+        .replace(/\[\[File:[^\]]+\]\]/g, '')
+        .replace(/\[\[画像:[^\]]+\]\]/g, '')
+        // その他のマークアップ
+        .replace(/<[^>]*>/g, '')
+        .replace(/\|[^=\n]*=/g, '')
+        .replace(/^\|.*/gm, '')
         .replace(/\n{3,}/g, '\n\n')
         .trim();
     }

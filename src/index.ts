@@ -66,12 +66,16 @@ program
       console.log(`記事: ${page.title}`);
       console.log('═'.repeat(50));
       
-      if (options.summary && page.extract) {
-        console.log(page.extract);
+      if (options.summary) {
+        if (page.extract) {
+          console.log('【要約】');
+          console.log(page.extract);
+        } else {
+          console.log('要約が利用できません。');
+        }
       } else if (page.content) {
-        const content = page.content.replace(/<[^>]*>/g, '').replace(/\n+/g, '\n\n');
         if (options.section) {
-          const sections = content.split(/^={2,}\s*(.+?)\s*={2,}$/gm);
+          const sections = page.content.split(/^={2,}\s*(.+?)\s*={2,}$/gm);
           const sectionIndex = sections.findIndex(section => 
             section.toLowerCase().includes(options.section.toLowerCase())
           );
@@ -81,7 +85,7 @@ program
             console.log('指定されたセクションが見つかりませんでした。');
           }
         } else {
-          console.log(content);
+          console.log(page.content);
         }
       }
 
