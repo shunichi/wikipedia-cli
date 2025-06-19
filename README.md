@@ -1,22 +1,22 @@
 # Wikipedia CLI Tool
 
-TypeScript製のWikipedia検索CLIツール。Wikipedia APIを使用して記事の検索・表示・履歴管理を行います。
+TypeScript 製の Wikipedia 検索 CLI ツール。Wikipedia API を使用して記事の検索・表示・履歴管理を行います。
 
 ## 特徴
 
-- 🔍 **記事検索**: キーワードでWikipedia記事を検索
+- 🔍 **記事検索**: キーワードで Wikipedia 記事を検索
 - 📖 **記事表示**: 記事の詳細内容を表示（要約モードも対応）
 - 🔄 **リダイレクト自動追従**: リダイレクト記事を自動的に最終記事に転送
 - 🎲 **ランダム記事**: ランダムな記事を表示
 - 📝 **検索履歴**: 過去の検索履歴を管理
-- 🌐 **多言語対応**: 日本語・英語Wikipedia対応
-- 🧹 **MediaWiki記法処理**: 記事のマークアップを読みやすいテキストに変換
+- 🌐 **多言語対応**: 日本語・英語 Wikipedia 対応
+- 🧹 **MediaWiki 記法処理**: 記事のマークアップを読みやすいテキストに変換
 
 ## インストール
 
 ### 前提条件
 
-- Node.js (v18以上)
+- Node.js (v18 以上)
 - npm
 
 ### セットアップ
@@ -24,7 +24,7 @@ TypeScript製のWikipedia検索CLIツール。Wikipedia APIを使用して記事
 ```bash
 # リポジトリをクローン
 git clone <repository-url>
-cd cc-sandox
+cd wikipedia-cli
 
 # 依存関係をインストール
 npm install
@@ -71,10 +71,12 @@ wiki history
 ### オプション
 
 #### 共通オプション
+
 - `-l, --lang <lang>`: 言語設定 (ja/en) デフォルト: ja
 
 #### show コマンド
-- `-s, --summary`: 要約のみ表示（最初の3文）
+
+- `-s, --summary`: 要約のみ表示（最初の 3 文）
 - `--section <section>`: 特定セクションを表示
 - `--links`: 関連リンクを表示
 
@@ -115,7 +117,7 @@ src/
 - **TypeScript**: 型安全な開発
 - **commander.js**: CLI framework
 - **axios**: HTTP クライアント
-- **Jest**: テストframework
+- **Jest**: テスト framework
 - **ESLint**: コード品質管理
 
 ## API 仕様
