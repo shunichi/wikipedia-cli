@@ -99,5 +99,72 @@ describe('Wikipedia API', () => {
       
       expect(page).toBeNull();
     });
+
+    it('リダイレクトされた記事を正しく処理する', async () => {
+      const mockAxios = require('axios');
+      mockAxios.get.mockResolvedValue({
+        data: {
+          query: {
+            redirects: [
+              {
+                from: '猫',
+                to: 'ネコ'
+              }
+            ],
+            pages: {
+              '123': {
+                title: 'ネコ',
+                revisions: [{
+                  slots: {
+                    main: {
+                      '*': '==概要==\nネコに関する記事です。'
+                    }
+                  }
+                }],
+                links: [{ title: '動物' }]
+              }
+            }
+          }
+        }
+      });
+
+      const page = await getWikipediaPage('猫', 'ja');
+      
+      expect(page).not.toBeNull();
+      expect(page?.title).toBe('ネコ');
+      expect(page?.originalTitle).toBe('猫');
+      expect(page?.redirected).toBe(true);
+      expect(page?.content).toContain('概要');
+    });
+
+    it('リダイレクトされない記事では redirected が false になる', async () => {
+      const mockAxios = require('axios');
+      mockAxios.get.mockResolvedValue({
+        data: {
+          query: {
+            pages: {
+              '123': {
+                title: 'テスト記事',
+                revisions: [{
+                  slots: {
+                    main: {
+                      '*': '==概要==\nテスト用の記事です。'
+                    }
+                  }
+                }],
+                links: [{ title: '関連記事' }]
+              }
+            }
+          }
+        }
+      });
+
+      const page = await getWikipediaPage('テスト記事', 'ja');
+      
+      expect(page).not.toBeNull();
+      expect(page?.title).toBe('テスト記事');
+      expect(page?.originalTitle).toBeUndefined();
+      expect(page?.redirected).toBe(false);
+    });
   });
 });

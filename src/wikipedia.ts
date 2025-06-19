@@ -11,6 +11,8 @@ export interface WikipediaPage {
   content?: string;
   extract?: string;
   links?: Array<{ title: string }>;
+  originalTitle?: string; // リダイレクト元のタイトル
+  redirected?: boolean; // リダイレクトされたかどうか
 }
 
 const getWikipediaBaseUrl = (lang: string): string => {
@@ -57,7 +59,7 @@ export async function getWikipediaPage(
   const baseUrl = getWikipediaBaseUrl(lang);
   
   try {
-    // ページの基本情報とコンテンツを取得
+    // ページの基本情報とコンテンツを取得（リダイレクト自動追従）
     const [contentResponse, extractResponse] = await Promise.all([
       // フルコンテンツ取得
       axios.get(baseUrl, {
@@ -69,6 +71,7 @@ export async function getWikipediaPage(
           rvprop: 'content',
           rvslots: 'main',
           pllimit: 50,
+          redirects: 1, // リダイレクト自動追従
           origin: '*'
         }
       }),
@@ -82,6 +85,7 @@ export async function getWikipediaPage(
           exintro: true,
           explaintext: true,
           exsectionformat: 'plain',
+          redirects: 1, // リダイレクト自動追従
           origin: '*'
         }
       })
@@ -89,6 +93,7 @@ export async function getWikipediaPage(
 
     const pages = contentResponse.data.query?.pages;
     const extractPages = extractResponse.data.query?.pages;
+    const redirects = contentResponse.data.query?.redirects;
     
     if (!pages || !extractPages) {
       return null;
@@ -103,6 +108,14 @@ export async function getWikipediaPage(
 
     const page = pages[pageId];
     const extractPage = extractPages[extractPageId];
+    
+    // リダイレクト情報を取得
+    let originalTitle = title;
+    let redirected = false;
+    if (redirects && redirects.length > 0) {
+      redirected = true;
+      originalTitle = redirects[0].from;
+    }
     
     let content = '';
     if (page.revisions && page.revisions[0] && page.revisions[0].slots && page.revisions[0].slots.main) {
@@ -125,7 +138,9 @@ export async function getWikipediaPage(
       title: page.title,
       content,
       extract: extractPage.extract,
-      links
+      links,
+      originalTitle: redirected ? originalTitle : undefined,
+      redirected
     };
   } catch (error) {
     throw new Error(`Wikipedia記事取得エラー: ${error instanceof Error ? error.message : error}`);

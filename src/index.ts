@@ -58,6 +58,11 @@ program
         return;
       }
 
+      if (page.redirected && page.originalTitle) {
+        console.log(`"${page.originalTitle}" から "${page.title}" にリダイレクトされました`);
+        console.log();
+      }
+      
       console.log(`記事: ${page.title}`);
       console.log('═'.repeat(50));
       
